@@ -110,6 +110,7 @@ class Minimarket {
     }
 }
 
+// Funcion que valida que el string no es vació
 
 const noEmptyString = (input, text, textAgain) => {
     input = prompt(`${text} :`);
@@ -118,6 +119,8 @@ const noEmptyString = (input, text, textAgain) => {
     }
     return input;
 }
+
+// Funcion para mostrar productos por categoria para el menu
 
 const productsByCategories = (minimarket, category) => {
     let table = "";
@@ -161,6 +164,7 @@ if (age >= 18) {
         switch (selectedOption) {
             case 1:
                 activeSubmenu = true;
+                // separar productos por categoria
                 while (activeSubmenu) {
                     let category = minimarket.categoriesMenu.mostrarMenu();
                     switch (category) {
@@ -205,6 +209,7 @@ if (age >= 18) {
                 }
                 break;
             case 2:
+                // carrito de compras: opraciones como comprar - remover - comprar (listar)
                 activeSubmenu1 = true;
                 while (activeSubmenu1) {
                     let operationProduct = minimarket.buyProducts.mostrarMenu();
@@ -239,6 +244,7 @@ if (age >= 18) {
                 }
                 break;
             case 3:
+                // editar datos de usuario
                 alert(`En caso de no querer modificar algún dato, seleccione cancelar.\nSus Datos actuales son: \nNombres: ${user.names}\nUsername: ${user.username}`);
                 let editNames = prompt("Edite su nombre completo: ");
                 let editUsername = prompt("Edite su username: ");
