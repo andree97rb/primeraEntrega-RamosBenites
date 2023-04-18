@@ -1,3 +1,5 @@
+// user
+
 class User {
   constructor(name, email, username, password) {
     this.name = name;
@@ -6,6 +8,8 @@ class User {
     this.password = password;
   }
 }
+
+//userStoreage
 
 function saveUser(user) {
   let users = JSON.parse(localStorage.getItem('users')) || [];
@@ -18,6 +22,8 @@ function findUser(emailOrUsername) {
   return users.find(user => user.email === emailOrUsername || user.username === emailOrUsername);
 }
 
+//create
+
 const registrationForm = document.getElementById('registration-form');
 if (registrationForm) {
   registrationForm.addEventListener('submit', function (e) {
@@ -29,7 +35,13 @@ if (registrationForm) {
     const password = document.getElementById('password').value;
 
     if (findUser(email) || findUser(username)) {
-      swal("Usuario ya registrado", "Este usuario ya ha sido registrado.", "warning");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Usuario ya registrado',
+        text: `Ya existe un usuario con el nombre de usuario ${username}`,
+        showConfirmButton: false,
+        timer: 1500
+      });
       return;
     }
 
@@ -38,12 +50,18 @@ if (registrationForm) {
     saveUser(user);
 
     registrationForm.reset();
-
-    swal("¡Registro exitoso!", "El usuario se ha registrado correctamente.", "success");
+    Swal.fire({
+      icon: 'success',
+      title: '¡Registro exitoso!',
+      text: `El usuario se ha registrado correctamente`,
+      showConfirmButton: false,
+      timer: 1500
+    });
     console.log(findUser("andree@gmail.com"));
   });
 }
 
+//login
 
 const loginForm = document.getElementById('login-form');
 if (loginForm) {
@@ -56,7 +74,13 @@ if (loginForm) {
     const user = findUser(emailOrUsername);
 
     if (!user) {
-      swal("Datos incorrectos", "El correo o el nombre de usuario son incorrectos.", "error");
+      Swal.fire({
+        icon: 'error',
+        title: 'Datos incorrectos',
+        text: `El correo o el nombre de usuario son incorrectos`,
+        showConfirmButton: false,
+        timer: 1500
+      });
       loginForm.reset();
       return;
     }
@@ -74,35 +98,23 @@ if (loginForm) {
   });
 }
 
-
+//minimarket
 
 class Minimarket {
   constructor() {
-    this.products = [
-      new Product("Arroz", 5, "Alimentos"),
-      new Product("Fideos", 8, "Alimentos"),
-      new Product("Harina", 7, "Alimentos"),
-      new Product("Azucar", 5, "Alimentos"),
-      new Product("Sal", 3, "Alimentos"),
-      new Product("Aceite", 10, "Alimentos"),
-      new Product("Caramelos", 3, "Snacks"),
-      new Product("Leche", 6, "Alimentos"),
-      new Product("Pollo", 15, "Carnes"),
-      new Product("Carne de res", 25, "Carnes"),
-      new Product("Agua embotellada", 2, "Bebidas"),
-      new Product("Gaseosas", 3, "Bebidas"),
-      new Product("Cervezas", 12, "Bebidas"),
-      new Product("Vinos", 20, "Bebidas"),
-      new Product("Jabon en polvo", 8, "Limpieza"),
-      new Product("Detergente", 12, "Limpieza"),
-      new Product("Suavizante", 18, "Limpieza"),
-      new Product("Shampoo", 15, "Cuidado personal"),
-      new Product("Acondicionador", 12, "Cuidado personal"),
-      new Product("Pasta dental", 7, "Cuidado personal"),
-      new Product("Galletas", 4, "Snacks"),
-      new Product("Papas fritas", 5, "Snacks"),
-      new Product("Chicles", 2, "Snacks"),
-    ];
+    this.products = [];
+  }
+
+  async getProductsFromApi() {
+    try {
+      const response = await fetch("https://fakestoreapi.com/products");
+      const data = await response.json();
+      const apiProducts = data.map((product) => new Product(product.title, product.price, product.category, product.image));
+      this.products.push(...apiProducts); // Agrega los productos recuperados al array products de la instancia
+      return apiProducts;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   getCategories() {
@@ -116,11 +128,14 @@ class Minimarket {
   }
 }
 
+//product
+
 class Product {
-  constructor(name, price, category) {
+  constructor(name, price, category, image) {
     this.name = name;
     this.price = price;
     this.category = category;
+    this.image = image;
   }
 }
 
@@ -155,6 +170,7 @@ class Cart {
   }
 }
 
+
 function isLoggedIn() {
   return localStorage.getItem("users") !== null;
 }
@@ -175,23 +191,27 @@ function logout() {
 
 const minimarket = new Minimarket();
 const productsContainer = document.getElementById("products-container");
+
 const categorySelector = document.getElementById("category-selector");
+
+const allOption = document.createElement("option");
 const cart = new Cart();
 
-const categories = minimarket.getCategories();
-const allOption = document.createElement("option");
-allOption.value = "";
-allOption.textContent = "Todos";
+getAllCategories = () => {
+  const categories = minimarket.getCategories();
+  allOption.value = "";
+  allOption.textContent = "Todos";
 
 
-categorySelector.appendChild(allOption);
+  categorySelector.appendChild(allOption);
 
-categories.forEach((category) => {
-  const option = document.createElement("option");
-  option.value = category;
-  option.textContent = category;
-  categorySelector.appendChild(option);
-});
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categorySelector.appendChild(option);
+  });
+}
 
 function filterProducts() {
   if (!isLoggedIn()) {
@@ -212,7 +232,7 @@ function filterProducts() {
     (product) => `
       <div class="col">
         <div class="card">
-          <img src="https://via.placeholder.com/300x200.png?text=${product.name}" class="card-img-top" alt="${product.name}">
+          <img src="${product.image}" class="card-img-top" alt="${product.name}">
           <div class="card-body">
             <h5 class="card-title">${product.name}</h5>
             <p class="card-text">Precio: ${product.price} soles</p>
@@ -231,15 +251,18 @@ function filterProducts() {
   }
 }
 
-
-
-
 function addToCart(productName) {
   const product = minimarket.products.find((p) => p.name === productName);
   if (product) {
     cart.addItem(product);
     updateCart();
-    swal("Producto agregado", `Producto: ${product.name} .`, "success");
+    Swal.fire({
+      icon: 'success',
+      title: 'Producto agregado',
+      text: `Producto: ${product.name}`,
+      showConfirmButton: false,
+      timer: 1500
+    });
   } else {
     alert("Producto no encontrado.");
   }
@@ -256,6 +279,50 @@ function removeItemFromCart(productName) {
 function clearCart() {
   cart.clearCart();
   updateCart();
+}
+
+function buyCart() {
+  const totalSum = parseFloat(cart.total.toFixed(1));
+
+  Swal.fire({
+    title: 'Comprar',
+    html: `
+      <form>
+        <div class="form-group">
+          <label for="name">Nombre completo:</label>
+          <input type="text" class="form-control" id="name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Correo electrónico:</label>
+          <input type="email" class="form-control" id="email" required>
+        </div>
+        <div class="form-group">
+          <label for="card-number">Número de tarjeta:</label>
+          <input type="text" class="form-control" id="card-number" required>
+        </div>
+      </form>
+    `,
+    confirmButtonText: 'Comprar',
+    cancelButtonText: 'Cancelar',
+    showCancelButton: true,
+    allowOutsideClick: false,
+    preConfirm: () => {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const cardNumber = document.getElementById('card-number').value;
+
+      if (!name || !email || !cardNumber) {
+        Swal.showValidationMessage('Por favor complete todos los campos');
+      } else {
+        return { name: name, email: email, cardNumber: cardNumber };
+      }
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      clearCart();
+      Swal.fire('Compra realizada', `El total de la compra es de ${totalSum} dólares`, 'success');
+    }
+  });
 }
 
 function updateCart() {
@@ -281,9 +348,10 @@ if (logoutButton) {
   });
 }
 
-
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  minimarket.products = await minimarket.getProductsFromApi();
+  console.log(minimarket.products.length)
+  getAllCategories();
   filterProducts();
   updateCart();
 });
