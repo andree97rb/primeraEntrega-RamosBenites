@@ -320,7 +320,7 @@ function buyCart() {
   }).then((result) => {
     if (result.isConfirmed) {
       clearCart();
-      Swal.fire('Compra realizada', `El total de la compra es de ${totalSum} dólares`, 'success');
+      Swal.fire('Compra realizada', `El total de la compra es fue de ${totalSum} soles`, 'success');
     }
   });
 }
