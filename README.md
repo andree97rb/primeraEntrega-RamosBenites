@@ -5,3 +5,9 @@ Cómo usar: Para utilizar la aplicación, los usuarios deben crear una cuenta e 
 Royal Sale es una forma fácil y conveniente de comprar en línea.
 
 Instalación: Para instalar Royal Sale, simplemente clone el repositorio y ejecute la aplicación.
+
+![image](https://user-images.githubusercontent.com/63792804/232925224-1dc41773-3c0d-456b-a11e-beea91146cbc.png)
+
+![image](https://user-images.githubusercontent.com/63792804/232925305-8839e7e8-0f17-4575-b9bd-0c8897caa48f.png)
+
+
